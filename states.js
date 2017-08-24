@@ -4,7 +4,7 @@
 map = (function () {
     'use strict';
 
-    var map_start_location = [40.70531887544228, -74.00976419448853, 15]; // NYC
+    var map_start_location = [37.627, -93.504, 4]; // USA    
 
     /*** URL parsing ***/
 
@@ -25,7 +25,7 @@ map = (function () {
     );
 
     var layer = Tangram.leafletLayer({
-        scene: 'scene.yaml',
+        scene: 'states.yaml',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
