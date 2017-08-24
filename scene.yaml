@@ -6,9 +6,10 @@ sources:
             api_key: vector-tiles-AGr6avQ
     test:
         type: GeoJSON
-        # url: http://localhost:8080/gz_2010_us_040_00_20m.json
-        url: gz_2010_us_050_00_20m.json
-        scripts: ['colorbrewer.min.js']
+        # url: https://rawgit.com/meetar/choropleth-demos/master/gz_2010_us_040_00_20m.json # states
+        # url: https://rawgit.com/meetar/choropleth-demos/master/gz_2010_us_050_00_20m.json # counties
+        url: https://rawgit.com/tangrams/choropleth-demos/master/blocks.json # counties
+        scripts: ['https://rawgit.com/mbostock/5577023/raw/14bc68f5c7aa174c53fc6efe8dab8292295da950/colorbrewer.min.js']
 camera:
     type: isometric
 layers:
@@ -28,13 +29,16 @@ layers:
         data: { source: test }
         draw:
             text:
-                visible: false
+                visible: true
                 # collide: false
                 # text_source: CENSUSAREA
                 text_source: |
                     function() {
-                        var f = feature.CENSUSAREA;
+                        var f = feature.value;
+                        // console.log(v)
                         // return colorbrewer.YlGnBu['9'].length;
+                        v = Math.pow(2, f);
+                        return v;
                         return Math.floor(f);
                     }
                 font:
@@ -44,18 +48,57 @@ layers:
                 order: 3
                 color: |
                     function() {
-                        var scale = colorbrewer.YlGnBu['9'];
-                        var min = 100;
-                        var max = 2500;
-                        var f = feature.CENSUSAREA - min;
-                        f /= max + min;
-                        var i = Math.ceil(f * scale.length - 1);
-                        i = Math.min(i, scale.length - 1);
-                        i = Math.max(i, 0);
-                        return scale[i];
+                        var gradient = colorbrewer.YlGnBu['6'];
+                        var min = 1;
+                        var max = 32;
+                        var value = feature.value;
+                        value = Math.pow(2, value);
+                        var e = value - min;
+                        var f = value - min;
+
+                        var minv = Math.log(1);
+                        var maxv = Math.log(32);
+
+                        // calculate adjustment factor
+                        // based on https://stackoverflow.com/questions/846221/logarithmic-slider
+                        var scale = (maxv-minv) / (max-min);
+
+                        var s = (Math.log(value)-minv) / (scale + min);
+
+
+                        s /= maxv;
+                        console.log('maxv:', maxv)
+
+                        console.log('max:', max)
+                        f /= max;
+                        console.log(e, f, s)
+
+                        var log = true;
+                        // log = false;
+
+                        if (log) {
+                            var j = Math.floor(s * gradient.length)- 0;
+                            console.log('j:', j)
+                            j = Math.min(j, gradient.length - 1);
+                            console.log('j:', j)
+                            j = Math.max(j, 0);
+                            console.log('j:', j, '\n\n')
+                            return gradient[j];
+                        } else {
+
+                            var i = Math.floor(f * gradient.length)- 0;
+                            console.log('i:', i)
+                            i = Math.min(i, gradient.length - 1);
+                            console.log('i:', i)
+                            i = Math.max(i, 0);
+                            console.log('i:', i, '\n\n');
+                            return gradient[i];
+                        }
+
                     }
+
             lines:
-                visible: false
+                visible: true
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
