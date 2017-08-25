@@ -4,10 +4,13 @@ sources:
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
         url_params:
             api_key: vector-tiles-AGr6avQ
+    states:
+        type: GeoJSON
+        url: gz_2010_us_050_00_20m.json # states
+        scripts: ['colorbrewer.min.js']
     test:
         type: GeoJSON
-        # url: http://localhost:8080/gz_2010_us_040_00_20m.json
-        url: gz_2010_us_050_00_20m.json
+        url: blocks.json # test blocks
         scripts: ['colorbrewer.min.js']
 camera:
     type: isometric
@@ -24,8 +27,8 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    test:
-        data: { source: test }
+    states:
+        data: { source: states }
         draw:
             text:
                 visible: false
@@ -56,6 +59,95 @@ layers:
                     }
             lines:
                 visible: false
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
+    test-linear:
+        enabled: false
+        data: { source: test }
+        draw:
+            text:
+                collide: false
+                # text_source: CENSUSAREA
+                text_source: |
+                    function() {
+                        var f = feature.value;
+                        return Math.floor(f);
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu['6'];
+                        var min = 1;
+                        var max = 32;
+                        var value = feature.value;
+                        value = Math.pow(2, value);
+                        var e = value - min;
+                        var f = value - min;
+
+                        f /= max;
+
+                        var i = Math.floor(f * gradient.length)- 0;
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        return gradient[i];
+                    }
+
+            lines:
+                visible: true
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
+    test-log:
+        enabled: true
+        data: { source: test }
+        draw:
+            text:
+                collide: false
+                # text_source: CENSUSAREA
+                text_source: |
+                    function() {
+                        var f = feature.value;
+                        v = Math.pow(2, f);
+                        return v;
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu['6'];
+                        var min = 1;
+                        var max = 32;
+                        var value = feature.value;
+                        value = Math.pow(2, value);
+                        var e = value - min;
+                        var f = value - min;
+
+                        var minv = Math.log(1);
+                        var maxv = Math.log(32);
+
+                        // calculate adjustment factor
+                        // based on https://stackoverflow.com/questions/846221/logarithmic-slider
+                        var scale = (maxv-minv) / (max-min);
+
+                        var s = (Math.log(value)-minv) / (scale + min);
+                        s /= maxv;
+
+                        var j = Math.floor(s * gradient.length)- 0;
+                        j = Math.min(j, gradient.length - 1);
+                        j = Math.max(j, 0);
+                        return gradient[j];
+                    }
+
+            lines:
+                visible: true
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
