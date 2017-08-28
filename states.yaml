@@ -14,6 +14,11 @@ sources:
         scripts: ['colorbrewer.min.js']
 camera:
     type: isometric
+
+global:
+    minval: 0
+    maxval: 32
+
 layers:
     earth:
         data: { source: mapzen }
@@ -32,7 +37,7 @@ layers:
         draw:
             text:
                 visible: false
-                # collide: false
+                collide: false
                 # text_source: CENSUSAREA
                 text_source: |
                     function() {
@@ -68,12 +73,9 @@ layers:
         draw:
             text:
                 collide: false
+                repeat_distance: 0px
                 # text_source: CENSUSAREA
-                text_source: |
-                    function() {
-                        var f = feature.value;
-                        return Math.floor(f);
-                    }
+                text_source: value
                 font:
                     fill: red
                     size: 10px
@@ -82,10 +84,10 @@ layers:
                 color: |
                     function() {
                         var gradient = colorbrewer.YlGnBu['6'];
-                        var min = 1;
-                        var max = 32;
+                        var min = global.minval;
+                        var max = global.maxval;
                         var value = feature.value;
-                        value = Math.pow(2, value);
+                        //value = Math.pow(2, value);
                         var e = value - min;
                         var f = value - min;
 
@@ -107,14 +109,10 @@ layers:
         data: { source: test }
         draw:
             text:
+                repeat_distance: 0px
                 collide: false
                 # text_source: CENSUSAREA
-                text_source: |
-                    function() {
-                        var f = feature.value;
-                        v = Math.pow(2, f);
-                        return v;
-                    }
+                text_source: value
                 font:
                     fill: red
                     size: 10px
@@ -123,24 +121,23 @@ layers:
                 color: |
                     function() {
                         var gradient = colorbrewer.YlGnBu['6'];
-                        var min = 1;
-                        var max = 32;
+                        var min = Math.max(global.minval, 1);
+                        var max = global.maxval;
                         var value = feature.value;
-                        value = Math.pow(2, value);
                         var e = value - min;
                         var f = value - min;
 
-                        var minv = Math.log(1);
-                        var maxv = Math.log(32);
+                        var minv = Math.log(min);
+                        var maxv = Math.log(max);
 
                         // calculate adjustment factor
                         // based on https://stackoverflow.com/questions/846221/logarithmic-slider
                         var scale = (maxv-minv) / (max-min);
-
                         var s = (Math.log(value)-minv) / (scale + min);
-                        s /= maxv;
+                        s /= maxv;s
+                        // if (s === Infinity) 
 
-                        var j = Math.floor(s * gradient.length)- 0;
+                        var j = Math.floor(s * gradient.length);
                         j = Math.min(j, gradient.length - 1);
                         j = Math.max(j, 0);
                         return gradient[j];

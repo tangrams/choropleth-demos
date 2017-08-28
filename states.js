@@ -60,35 +60,36 @@ map = (function () {
         }).listen();
 
         gui.u_min = 0.;
-        gui.add(gui, 'u_min', 0, 1000).name("minimum value").onChange(function(value) {
-            scene.styles.choropleth.shaders.uniforms.u_min = value;
-            scene.requestRedraw();
+        gui.add(gui, 'u_min', 0, 32).name("minimum value").onChange(function(value) {
+            scene.config.global.minval = value;
+            scene.updateConfig({ rebuild: true });
+            // scene.rebuild();
         });
         gui.u_max = 0.;
-        gui.add(gui, 'u_max', 0, 1000).name("maximum value").onChange(function(value) {
-            scene.styles.choropleth.shaders.uniforms.u_max = value;
-            scene.requestRedraw();
+        gui.add(gui, 'u_max', 0, 32).name("maximum value").onChange(function(value) {
+            scene.config.global.maxval = value;
+            scene.rebuild();
         });
-        gui.autoexpose = true;
-        gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
-            sliderState(!value);
-            if (value) {
-                // store slider values
-                uminValue = gui.u_min;
-                umaxValue = gui.u_max;
-                // force widening value to trigger redraw
-                lastumax = 0;
-                expose();
-            } else if (typeof uminValue != 'undefined') {
-                // retrieve slider values
-                scene.styles.choropleth.shaders.uniforms.u_min = uminValue;
-                scene.styles.choropleth.shaders.uniforms.u_max = umaxValue;
-                scene.requestRedraw();
-                gui.u_min = uminValue;
-                gui.u_max = umaxValue;
-                updateGUI();
-            }
-        });
+        // gui.autoexpose = true;
+        // gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
+        //     sliderState(!value);
+        //     if (value) {
+        //         // store slider values
+        //         uminValue = gui.u_min;
+        //         umaxValue = gui.u_max;
+        //         // force widening value to trigger redraw
+        //         lastumax = 0;
+        //         expose();
+        //     } else if (typeof uminValue != 'undefined') {
+        //         // retrieve slider values
+        //         scene.styles.choropleth.shaders.uniforms.u_min = uminValue;
+        //         scene.styles.choropleth.shaders.uniforms.u_max = umaxValue;
+        //         scene.requestRedraw();
+        //         gui.u_min = uminValue;
+        //         gui.u_max = umaxValue;
+        //         updateGUI();
+        //     }
+        // });
     }
     /***** Render loop *****/
 
@@ -97,6 +98,7 @@ map = (function () {
         layer.on('init', function() {
             gui = new dat.GUI({ autoPlace: true, hideable: true, width: 300 });
             addGUI();
+            // console.log('main test:', testcolor)
         });
         layer.addTo(map);
     });
