@@ -42,16 +42,22 @@ map = (function () {
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
-        gui.linear = true;
-        gui.add(gui, 'linear').onChange(function(value) {
-            scene.styles.choropleth.shaders.uniforms.u_log = false;
-            scene.requestRedraw();
+        gui.linear = false;
+        gui.add(gui, 'linear').listen().onChange(function() {
+            gui.linear = true;
+            gui.log = false;
+            scene.config.layers['test-linear'].enabled = true;
+            scene.config.layers['test-log'].enabled = false;
+            scene.updateConfig();
         });
-        gui.log = false;
-        gui.add(gui, 'log').onChange(function(value) {
-            scene.styles.choropleth.shaders.uniforms.u_log = true;
-            scene.requestRedraw();
-        });
+        gui.log = true;
+        gui.add(gui, 'log').onChange(function() {
+            gui.log = true;
+            gui.linear = false;
+            scene.config.layers['test-log'].enabled = true;
+            scene.config.layers['test-linear'].enabled = false;
+            scene.updateConfig();
+        }).listen();
 
         gui.u_min = 0.;
         gui.add(gui, 'u_min', 0, 1000).name("minimum value").onChange(function(value) {
