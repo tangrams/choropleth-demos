@@ -1,13 +1,4 @@
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
-        url_params:
-            api_key: vector-tiles-AGr6avQ
-    states:
-        type: GeoJSON
-        url: gz_2010_us_050_00_20m.json # states
-        scripts: ['colorbrewer.min.js']
     test:
         type: GeoJSON
         url: blocks.json # test blocks
@@ -18,6 +9,9 @@ camera:
 global:
     minval: 0
     maxval: 32
+scene:
+    background:
+        color: '#add8e6'
 
 layers:
     earth:
@@ -32,41 +26,7 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    states:
-        data: { source: states }
-        draw:
-            text:
-                visible: false
-                collide: false
-                # text_source: CENSUSAREA
-                text_source: |
-                    function() {
-                        var f = feature.CENSUSAREA;
-                        // return colorbrewer.YlGnBu['9'].length;
-                        return Math.floor(f);
-                    }
-                font:
-                    fill: red
-                    size: 10px
-            polygons:
-                order: 3
-                color: |
-                    function() {
-                        var scale = colorbrewer.YlGnBu['9'];
-                        var min = 100;
-                        var max = 2500;
-                        var f = feature.CENSUSAREA - min;
-                        f /= max + min;
-                        var i = Math.ceil(f * scale.length - 1);
-                        i = Math.min(i, scale.length - 1);
-                        i = Math.max(i, 0);
-                        return scale[i];
-                    }
-            lines:
-                visible: false
-                order: 4
-                width: [[3,.3px],[5,1px]]
-                color: black
+
     test-linear:
         enabled: false
         data: { source: test }
