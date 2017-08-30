@@ -42,54 +42,50 @@ map = (function () {
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
-        gui.linear = false;
+        gui.linear = true;
         gui.add(gui, 'linear').listen().onChange(function() {
             gui.linear = true;
             gui.log = false;
-            scene.config.layers['test-linear'].enabled = true;
-            scene.config.layers['test-log'].enabled = false;
+            scene.config.layers['states-linear'].enabled = true;
+            scene.config.layers['states-log'].enabled = false;
             scene.updateConfig();
         });
-        gui.log = true;
-        gui.add(gui, 'log').onChange(function() {
+        gui.log = false;
+        gui.add(gui, 'log').listen().onChange(function() {
             gui.log = true;
             gui.linear = false;
-            scene.config.layers['test-log'].enabled = true;
-            scene.config.layers['test-linear'].enabled = false;
+            scene.config.layers['states-log'].enabled = true;
+            scene.config.layers['states-linear'].enabled = false;
             scene.updateConfig();
-        }).listen();
+        });
+        gui.labels = false;
+        gui.add(gui, 'labels').onChange(function(value) {
+            scene.config.global.textvisible = value;
+            scene.updateConfig();
+        });
+        gui.lines = false;
+        gui.add(gui, 'lines').onChange(function(value) {
+            scene.config.global.linesvisible = value;
+            scene.updateConfig();
+        });
 
-        gui.u_min = 0.;
-        gui.add(gui, 'u_min', 0, 32).name("minimum value").onChange(function(value) {
+        gui.minval = 100;
+        gui.add(gui, 'minval', 0, 2500).name("minimum value").onChange(function(value) {
             scene.config.global.minval = value;
             scene.updateConfig({ rebuild: true });
             // scene.rebuild();
         });
-        gui.u_max = 0.;
-        gui.add(gui, 'u_max', 0, 32).name("maximum value").onChange(function(value) {
+        gui.maxval = 10000;
+        gui.add(gui, 'maxval', 0, 10000).name("maximum value").onChange(function(value) {
             scene.config.global.maxval = value;
-            scene.rebuild();
+            scene.updateConfig({ rebuild: true });
         });
-        // gui.autoexpose = true;
-        // gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
-        //     sliderState(!value);
-        //     if (value) {
-        //         // store slider values
-        //         uminValue = gui.u_min;
-        //         umaxValue = gui.u_max;
-        //         // force widening value to trigger redraw
-        //         lastumax = 0;
-        //         expose();
-        //     } else if (typeof uminValue != 'undefined') {
-        //         // retrieve slider values
-        //         scene.styles.choropleth.shaders.uniforms.u_min = uminValue;
-        //         scene.styles.choropleth.shaders.uniforms.u_max = umaxValue;
-        //         scene.requestRedraw();
-        //         gui.u_min = uminValue;
-        //         gui.u_max = umaxValue;
-        //         updateGUI();
-        //     }
-        // });
+        gui.divisions = 6;
+        gui.add(gui, 'divisions', 3, 9).listen().name("divisions").onChange(function(value) {
+            gui.divisions = Math.round(value);
+            scene.config.global.divisions = Math.round(value);
+            scene.updateConfig({ rebuild: true });
+        });
     }
     /***** Render loop *****/
 

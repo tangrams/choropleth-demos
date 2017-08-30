@@ -1,23 +1,19 @@
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
-        url_params:
-            api_key: vector-tiles-AGr6avQ
     states:
         type: GeoJSON
         url: gz_2010_us_050_00_20m.json # states
-        scripts: ['colorbrewer.min.js']
-    test:
-        type: GeoJSON
-        url: blocks.json # test blocks
-        scripts: ['colorbrewer.min.js']
-camera:
-    type: isometric
+        scripts: ['colorbrewer.min.js', 'logbase.js']
 
 global:
-    minval: 0
-    maxval: 32
+    minval: 100
+    maxval: 10000
+    divisions: 6
+    textvisible: false
+    linesvisible: false
+
+scene:
+    background:
+        color: '#add8e6'
 
 layers:
     earth:
@@ -32,17 +28,16 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    states:
+    states-linear:
+        enabled: true
         data: { source: states }
         draw:
             text:
-                visible: false
-                collide: false
-                # text_source: CENSUSAREA
+                visible: global.textvisible
+                collide: true
                 text_source: |
                     function() {
                         var f = feature.CENSUSAREA;
-                        // return colorbrewer.YlGnBu['9'].length;
                         return Math.floor(f);
                     }
                 font:
@@ -52,67 +47,34 @@ layers:
                 order: 3
                 color: |
                     function() {
-                        var scale = colorbrewer.YlGnBu['9'];
-                        var min = 100;
-                        var max = 2500;
-                        var f = feature.CENSUSAREA - min;
-                        f /= max + min;
-                        var i = Math.ceil(f * scale.length - 1);
-                        i = Math.min(i, scale.length - 1);
-                        i = Math.max(i, 0);
-                        return scale[i];
-                    }
-            lines:
-                visible: false
-                order: 4
-                width: [[3,.3px],[5,1px]]
-                color: black
-    test-linear:
-        enabled: false
-        data: { source: test }
-        draw:
-            text:
-                collide: false
-                repeat_distance: 0px
-                # text_source: CENSUSAREA
-                text_source: value
-                font:
-                    fill: red
-                    size: 10px
-            polygons:
-                order: 3
-                color: |
-                    function() {
-                        var gradient = colorbrewer.YlGnBu['6'];
+                        var gradient = colorbrewer.YlGnBu[global.divisions];
                         var min = global.minval;
                         var max = global.maxval;
-                        var value = feature.value;
-                        //value = Math.pow(2, value);
-                        var e = value - min;
-                        var f = value - min;
-
-                        f /= max;
-
-                        var i = Math.floor(f * gradient.length)- 0;
+                        var f = feature.CENSUSAREA - min;
+                        f /= max + min;
+                        var i = Math.floor(f * gradient.length);
                         i = Math.min(i, gradient.length - 1);
                         i = Math.max(i, 0);
                         return gradient[i];
                     }
-
             lines:
-                visible: true
+                visible: global.linesvisible
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
-    test-log:
-        enabled: true
-        data: { source: test }
+    states-log:
+        enabled: false
+        data: { source: states }
         draw:
             text:
+                visible: global.textvisible
                 repeat_distance: 0px
-                collide: false
-                # text_source: CENSUSAREA
-                text_source: value
+                collide: true
+                text_source: |
+                    function() {
+                        var f = feature.CENSUSAREA;
+                        return Math.floor(f);
+                    }
                 font:
                     fill: red
                     size: 10px
@@ -120,31 +82,37 @@ layers:
                 order: 3
                 color: |
                     function() {
-                        var gradient = colorbrewer.YlGnBu['6'];
-                        var min = Math.max(global.minval, 1);
-                        var max = global.maxval;
-                        var value = feature.value;
-                        var e = value - min;
-                        var f = value - min;
+                        var gradient = colorbrewer.YlGnBu[global.divisions];
 
-                        var minv = Math.log(min);
-                        var maxv = Math.log(max);
+                        var minv = global.minval;
+                        var maxv = global.maxval;
+                        minv = Math.max(minv, 1);
+
+                        minv = Math.log(minv);
+                        maxv = Math.log(maxv);
+                        minv = Math.max(minv, 0);
+
+                        var value = feature.CENSUSAREA;
+                        value = Math.max(value, global.minval);
+                        value = Math.min(value, global.maxval);
+
+                        var scale = maxv-minv;
 
                         // calculate adjustment factor
                         // based on https://stackoverflow.com/questions/846221/logarithmic-slider
-                        var scale = (maxv-minv) / (max-min);
-                        var s = (Math.log(value)-minv) / (scale + min);
-                        s /= maxv;s
-                        // if (s === Infinity) 
+                        var scaledValue = (Math.log(value)-minv) / scale;
+                        //scaledValue = Math.max(scaledValue, 0);
 
-                        var j = Math.floor(s * gradient.length);
+                        // convert to an index in the gradient array
+                        var j = Math.floor(scaledValue * gradient.length);
                         j = Math.min(j, gradient.length - 1);
                         j = Math.max(j, 0);
+
                         return gradient[j];
                     }
 
             lines:
-                visible: true
+                visible: global.linesvisible
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
