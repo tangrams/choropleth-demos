@@ -59,16 +59,20 @@ map = (function () {
             scene.updateConfig();
         }).listen();
 
-        gui.u_min = 0.;
+        gui.logbase = 2;
+        gui.add(gui, 'logbase', 0.0, 10.0).name("log base").onChange(function(value) {
+            scene.config.global.base = value;
+            scene.updateConfig();
+        });
+        gui.u_min = 0;
         gui.add(gui, 'u_min', 0, 32).name("minimum value").onChange(function(value) {
             scene.config.global.minval = value;
-            scene.updateConfig({ rebuild: true });
-            // scene.rebuild();
+            scene.updateConfig();
         });
-        gui.u_max = 0.;
-        gui.add(gui, 'u_max', 0, 32).name("maximum value").onChange(function(value) {
+        gui.u_max = 32;
+        gui.add(gui, 'u_max', 0, 100000).name("maximum value").onChange(function(value) {
             scene.config.global.maxval = value;
-            scene.rebuild();
+            scene.updateConfig();
         });
     }
     /***** Render loop *****/

@@ -2,13 +2,14 @@ sources:
     test:
         type: GeoJSON
         url: blocks.json # test blocks
-        scripts: ['colorbrewer.min.js']
+        scripts: ['colorbrewer.min.js', 'logbase.js']
 camera:
     type: isometric
 
 global:
     minval: 0
     maxval: 32
+    base: 2
 scene:
     background:
         color: '#add8e6'
@@ -47,7 +48,6 @@ layers:
                         var min = global.minval;
                         var max = global.maxval;
                         var value = feature.value;
-                        //value = Math.pow(2, value);
                         var e = value - min;
                         var f = value - min;
 
@@ -81,25 +81,33 @@ layers:
                 color: |
                     function() {
                         var gradient = colorbrewer.YlGnBu['6'];
-                        var min = Math.max(global.minval, 1);
-                        var max = global.maxval;
-                        var value = feature.value;
-                        var e = value - min;
-                        var f = value - min;
 
-                        var minv = Math.log(min);
-                        var maxv = Math.log(max);
+                        var minv = global.minval;
+                        var maxv = global.maxval;
+                        minv = Math.max(minv, 1);
+
+                        minv = logbase(minv, global.base);
+                        maxv = logbase(maxv, global.base);
+                        minv = Math.max(minv, 0);
+
+                        var value = feature.value;
+                        value = Math.max(value, global.minval);
+                        value = Math.min(value, global.maxval);
+
+                        var scale = maxv-minv;
 
                         // calculate adjustment factor
                         // based on https://stackoverflow.com/questions/846221/logarithmic-slider
-                        var scale = (maxv-minv) / (max-min);
-                        var s = (Math.log(value)-minv) / (scale + min);
-                        s /= maxv;s
-                        // if (s === Infinity) 
+                        var scaledValue = (logbase(value, global.base)-minv) / scale;
+                        scaledValue = Math.max(scaledValue, 0);
 
-                        var j = Math.floor(s * gradient.length);
+                        // convert to an index in the gradient array
+                        //scaledValue /= maxv;
+                        var j = Math.floor(scaledValue * gradient.length);
                         j = Math.min(j, gradient.length - 1);
                         j = Math.max(j, 0);
+                        // console.log(minv, maxv, value, scale, scaledValue, j)
+                        // return j;
                         return gradient[j];
                     }
 
