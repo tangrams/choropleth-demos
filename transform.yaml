@@ -15,12 +15,8 @@ sources:
                 data.features.forEach(function(feature) { 
                     var d = feature.properties.retailspending_pct_usavg;
                     var match = /([0-9]*)\% (.*)/.exec(d);
-                    //console.log(match)
-                    //console.log(match[1])
-                    //console.log((match[2] === "below" ? '-' : '')+match[1]);
                     value = (match[2] === "below" ? '-' : '')+match[1];
                     feature.properties.retailspending_pct_usavg = (parseInt(value) + 100) / 2;
-                    //return toInt((match[2] === "below" ? '-' : '')+match[1]);
                 });
                 return data;
             }
