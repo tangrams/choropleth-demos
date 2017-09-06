@@ -25,7 +25,7 @@ map = (function () {
     );
 
     var layer = Tangram.leafletLayer({
-        scene: 'states.yaml',
+        scene: 'counties.yaml',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
@@ -46,23 +46,25 @@ map = (function () {
         gui.add(gui, 'linear').listen().onChange(function() {
             gui.linear = true;
             gui.log = false;
-            scene.config.layers['states-linear'].enabled = true;
-            scene.config.layers['states-log'].enabled = false;
+            scene.config.layers['counties-linear'].enabled = true;
+            scene.config.layers['counties-log'].enabled = false;
             scene.updateConfig();
         });
         gui.log = false;
         gui.add(gui, 'log').listen().onChange(function() {
             gui.log = true;
             gui.linear = false;
-            scene.config.layers['states-log'].enabled = true;
-            scene.config.layers['states-linear'].enabled = false;
+            scene.config.layers['counties-log'].enabled = true;
+            scene.config.layers['counties-linear'].enabled = false;
             scene.updateConfig();
         });
+
         gui.labels = false;
         gui.add(gui, 'labels').onChange(function(value) {
             scene.config.global.textvisible = value;
             scene.updateConfig();
         });
+
         gui.lines = false;
         gui.add(gui, 'lines').onChange(function(value) {
             scene.config.global.linesvisible = value;
@@ -72,19 +74,20 @@ map = (function () {
         gui.minval = 100;
         gui.add(gui, 'minval', 0, 2500).name("minimum value").onChange(function(value) {
             scene.config.global.minval = value;
-            scene.updateConfig({ rebuild: true });
-            // scene.rebuild();
+            scene.updateConfig();
         });
+
         gui.maxval = 10000;
         gui.add(gui, 'maxval', 0, 10000).name("maximum value").onChange(function(value) {
             scene.config.global.maxval = value;
-            scene.updateConfig({ rebuild: true });
+            scene.updateConfig();
         });
+
         gui.divisions = 6;
         gui.add(gui, 'divisions', 3, 9).listen().name("divisions").onChange(function(value) {
             gui.divisions = Math.round(value);
             scene.config.global.divisions = Math.round(value);
-            scene.updateConfig({ rebuild: true });
+            scene.updateConfig();
         });
     }
     /***** Render loop *****/
