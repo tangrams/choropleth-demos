@@ -1,0 +1,77 @@
+import:
+    - https://tangrams.github.io/blocks/geometry/projections.yaml
+    - https://tangrams.github.io/blocks/functions/map.yaml
+sources:
+    osm:
+        type: TopoJSON
+        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+    data:
+        type: TopoJSON
+        url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
+scene:
+    background:
+        color: [1.000,1.000,1.000]
+global:
+    color: function() { if (feature.rate > 18) { return [0.929,0.596,0.082]; } else if (feature.rate >= 12) {  return [0.949,0.757,0.141]; } else { return [0.847,0.851,0.851]; } }
+cameras:
+    perspective:
+        type: isometric
+lights:
+    directional1:
+        type: directional
+        direction: [.1, .5, -1]
+        diffuse: .7
+        ambient: .5
+styles:
+    toAlbers:
+        mix: [geometry-projections, functions-map]
+        animated: true
+        shaders:
+            blocks:
+                position: |
+                    // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
+                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
+                    vec2 mercator = u_map_position.xy + position.xy;
+                    float lat = y2lat_m(mercator.y);
+                    float lon = x2lon_m(mercator.x);
+                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
+    albers:
+        base: polygons
+        mix: toAlbers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+                color: |
+                    color.rgb *= vec3(min((worldPosition().z*.02+.7),1.));
+    albers-line:
+        base: lines
+        mix: toAlbers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+                color: |
+                    color.rgb *= .8;
+        
+layers:
+    water:
+        data: { source: osm }
+        properties: { width: 3 }
+        draw:
+            line:
+                order: 1
+                color: gray
+                width: 1px
+    counties:
+        data: { source: data }
+        draw:
+            albers:
+                order: 2
+                extrude: function() { return feature.rate; }
+                color: global.color
+            albers-line:
+                order: 1
+                extrude: function() { return feature.rate; }
+                width: 1px
+                color: global.color
