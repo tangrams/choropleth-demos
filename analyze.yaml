@@ -1,0 +1,88 @@
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 16
+    retail:
+        type: GeoJSON
+        url: retail-spending-potential.geojson
+        scripts: ['colorbrewer.min.js', 'logbase.js']
+        transform: |
+            function (data) {
+                var props = {};
+                data.features.forEach(function(feature) {
+                    for (var prop in feature.properties) {
+                        if (global.props.indexOf(prop) === -1) global.props.push(prop);
+                    }
+                    var d = feature.properties[global.whichproperty];
+                    var match = /([0-9]*)\% (.*)/.exec(d);
+                    value = (match[2] === "below" ? '-' : '')+match[1];
+                    feature.properties[global.whichproperty] = (parseInt(value) + 100) / 2;
+                });
+                console.log('global.props:', global.props)
+                global.props = 'test'
+                return data;
+            }
+
+global:
+    props: []
+    sdk_mapzen_api_key: mapzen-PvCT6iP
+    minval: 100
+    maxval: 10000
+    divisions: 6
+    textvisible: false
+    linesvisible: false
+    whichproperty: retailspending_pct_usavg
+
+scene:
+    background:
+        color: black
+
+layers:
+    retail:
+        enabled: true
+        data: { source: retail }
+        draw:
+            text:
+                visible: global.textvisible
+                collide: true
+                text_source: |
+                    function() {
+                        var f = feature[global.whichproperty];
+                        return Math.floor(f);
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.Blues[global.divisions];
+                        var min = global.minval;
+                        var max = global.maxval;
+                        var f = feature[global.whichproperty] - min;
+                        f /= max + min;
+                        f = 1. - f;
+                        var i = Math.floor(f * gradient.length);
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        return gradient[i];
+                    }
+    water:
+        data:
+            source: mapzen
+        draw:
+            polygons:
+                order: 0
+                color: '#222'
+    boundaries:
+        data:
+            source: mapzen
+        draw:
+            lines:
+                order: 1
+                color: '#222'
+                width: 2px
