@@ -1,0 +1,105 @@
+import:
+    - https://tangrams.github.io/blocks/geometry/projections.yaml
+    - https://tangrams.github.io/blocks/functions/map.yaml
+sources:
+    osm:
+        type: TopoJSON
+        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+    data:
+        type: TopoJSON
+        url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
+        scripts: ['https://rawgit.com/mbostock/5577023/raw/14bc68f5c7aa174c53fc6efe8dab8292295da950/colorbrewer.min.js']
+scene:
+    background:
+        color: [1.000,1.000,1.000]
+global:
+    min: 10
+    max: 50
+    color: |
+        function() {
+            function lerp(a, b, t) {
+                return [
+                    a.r + (b.r - a.r) * t,
+                    a.g + (b.g - a.g) * t,
+                    a.b + (b.b - a.b) * t
+                ];
+            }
+
+            a = {r:1, g:0, b:0};
+            b = {r:0, g:0, b:1};
+
+            // var gradient = colorbrewer.YlGnBu['9'];
+            // var gradient = [[1, 1, 1], [.5, .5, .5], [0, 0, 0]]
+            var gradient = [];
+            var steps = 10;
+            for (x = 0; x < 1; x += (1/steps)) {
+                // console.log(x);
+                // console.log(lerp(a, b, x))
+                gradient.push(lerp(a, b, x));
+                }
+            var value = feature.rate - global.min;
+            // var value = feature.rate;
+            value /= global.max - global.min;
+            value = 1. - value;
+            var i = Math.floor(value * gradient.length);
+            i = Math.min(i, gradient.length - 1);
+            i = Math.max(i, 0);
+            return gradient[i];
+
+
+            // if (feature.rate > 18) { return [0.929,0.596,0.082]; } else if (feature.rate >=     12) {  return [0.949,0.757,0.141]; } else { return [0.847,0.851,0.851]; }
+        }
+cameras:
+    perspective:
+        type: isometric
+lights:
+    directional1:
+        type: directional
+        direction: [.1, .5, -1]
+        diffuse: .7
+        ambient: .5
+styles:
+    toAlbers:
+        mix: [geometry-projections, functions-map]
+        animated: true
+        shaders:
+            blocks:
+                position: |
+                    // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
+                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
+                    vec2 mercator = u_map_position.xy + position.xy;
+                    float lat = y2lat_m(mercator.y);
+                    float lon = x2lon_m(mercator.x);
+                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
+    albers:
+        base: polygons
+        mix: toAlbers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+                color: |
+                    color.rgb *= vec3(min((worldPosition().z*.02+.7),1.));
+    albers-line:
+        base: lines
+        mix: toAlbers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+                color: |
+                    color.rgb *= .8;
+        
+layers:
+    counties:
+        data: { source: data }
+        draw:
+            albers:
+                order: 2
+                # extrude: function() { return feature.rate; }
+                color: global.color
+            albers-line:
+                order: 1
+                # extrude: function() { return feature.rate; }
+                width: 1px
+                color: global.color
