@@ -3,7 +3,7 @@ sources:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
         url_params:
-            api_key: vector-tiles-AGr6avQ
+            api_key: mapzen-PvCT6iP
     test:
         type: GeoJSON
         # url: https://rawgit.com/meetar/choropleth-demos/master/gz_2010_us_040_00_20m.json # states
