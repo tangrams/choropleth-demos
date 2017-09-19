@@ -34,7 +34,7 @@ map = (function () {
     // If there is a query, use it as the scene_url
     var query = parseQuery(window.location.search.slice(1));
     if (query.url) {
-        console.log(query.url)
+        console.log("Loading", query.url)
         scene_url = query.url;
     }
 
@@ -54,7 +54,6 @@ map = (function () {
     window.scene = scene;
 
     // setView expects format ([lat, long], zoom)
-    console.log(map_start_location.slice(0, 2), map_start_location[2])
     map.setView(map_start_location.slice(0, 2), map_start_location[2]);
 
     var hash = new L.Hash(map);
