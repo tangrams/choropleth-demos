@@ -5,6 +5,8 @@ sources:
     osm:
         type: TopoJSON
         url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+        url_params:
+            api_key: mapzen-tDHBHDp
     data:
         type: TopoJSON
         url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
@@ -59,7 +61,7 @@ layers:
         data: { source: osm }
         properties: { width: 3 }
         draw:
-            line:
+            albers-line:
                 order: 1
                 color: gray
                 width: 1px
