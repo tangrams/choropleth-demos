@@ -5,11 +5,11 @@ sources:
         url_params:
             api_key: mapzen-tDHBHDp
         max_zoom: 16
-    transform:
+    retail:
         type: GeoJSON
         url: retail-spending-potential.geojson
         # url: sample.geojson
-        scripts: ['colorbrewer.min.js', 'logbase.js']
+        scripts: ['colorbrewer.min.js']
         transform: |
             function (data, extra_data) {
                 data.features.forEach(function(feature) { 
@@ -36,7 +36,7 @@ scene:
 layers:
     transform-linear:
         enabled: true
-        data: { source: transform }
+        data: { source: retail }
         draw:
             text:
                 visible: global.textvisible
