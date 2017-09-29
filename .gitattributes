@@ -4,3 +4,4 @@ City_of_Sioux_Falls_Zoning.geojson filter=lfs diff=lfs merge=lfs -text
 countries.geo.json filter=lfs diff=lfs merge=lfs -text
 gz_2010_us_040_00_20m.json filter=lfs diff=lfs merge=lfs -text
 gz_2010_us_050_00_20m.json filter=lfs diff=lfs merge=lfs -text
+us.json filter=lfs diff=lfs merge=lfs -text
