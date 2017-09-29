@@ -1,0 +1,97 @@
+import:
+    - https://tangrams.github.io/blocks/geometry/projections.yaml
+    - https://tangrams.github.io/blocks/functions/map.yaml
+styles:
+    albers:
+        mix: [geometry-projections, functions-map]
+        animated: true
+        shaders:
+            blocks:
+                position: |
+                    // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
+                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
+                    vec2 mercator = u_map_position.xy + position.xy;
+                    float lat = y2lat_m(mercator.y);
+                    float lon = x2lon_m(mercator.x);
+                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
+    albers-poly:
+        base: polygons
+        mix: albers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+    albers-line:
+        base: lines
+        mix: albers
+        shaders: 
+            blocks: 
+                position: |
+                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
+sources:
+    osm:
+        type: TopoJSON
+        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+        url_params:
+            api_key: mapzen-tDHBHDp
+    states:
+        type: TopoJSON
+        url:  us.json
+        scripts: ['unemployment.js', 'colorbrewer.min.js']
+        transform: |
+            function(data) {
+                function pad(n, width, z) {
+                    z = z || '0';
+                    n = n + '';
+                    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+                }
+                data.counties.features.forEach(function(feature) {
+                    var padded = pad(feature.id, 5);
+                    if (rates[padded]) {
+                        feature.properties.rate = rates[padded];
+                        feature.properties.id = feature.id;
+                    } else {
+                        console.log('no rate:', feature.id)
+                    }
+                });
+
+                return data;
+            }
+global:
+    minval: 0
+    maxval: 9
+    divisions: 9
+layers:
+    counties:
+        data: { source: states, layer: counties }
+        draw:
+            text:
+                visible: false
+                collide: false
+                text_source: id
+                font:
+                    fill: red
+                    size: 10px
+            albers-poly:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.Blues[global.divisions];
+                        var min = global.minval;
+                        var max = global.maxval;
+                        var f = feature.rate - min;
+                        f /= max + min;
+                        var i = Math.floor(f * gradient.length);
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        //if (isNaN(i)) console.log('nan:', feature.rate, feature.id)
+                        // console.log(i)
+                        return gradient[i];
+                    }
+    states:
+        data: { source: states, layer: states }
+        draw:
+            albers-line:
+                order: 4
+                width: 1px
+                color: white
