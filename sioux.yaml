@@ -2,7 +2,7 @@ sources:
     sioux:
         type: GeoJSON
         url: City_of_Sioux_Falls_Zoning.geojson # sioux falls
-        scripts: ['colorbrewer.min.js', 'logbase.js']
+        scripts: ['colorbrewer.min.js']
 
 global:
     minval: 100
@@ -82,7 +82,7 @@ layers:
                 order: 3
                 color: |
                     function() {
-                        var gradient = colorbrewer.PuBuGn[global.divisions];
+                        var gradient = colorbrewer.BuGn[global.divisions];
 
                         var minv = global.minval;
                         var maxv = global.maxval;

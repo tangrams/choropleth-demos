@@ -70,13 +70,13 @@ map = (function () {
         // });
 
         gui.minval = 100;
-        gui.add(gui, 'minval', 0, 2500).listen().name("minimum value").onChange(function(value) {
+        gui.add(gui, 'minval', 0, 2000).listen().name("minimum value").onChange(function(value) {
             scene.config.global.minval = value;
             scene.updateConfig({ rebuild: true });
             // scene.rebuild();
         });
-        gui.maxval = 20000;
-        gui.add(gui, 'maxval', 0, 20000).listen().name("maximum value").onChange(function(value) {
+        gui.maxval = 2000;
+        gui.add(gui, 'maxval', 0, 2000).listen().name("maximum value").onChange(function(value) {
             scene.config.global.maxval = value;
             scene.updateConfig({ rebuild: true });
         });
