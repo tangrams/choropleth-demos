@@ -1,0 +1,43 @@
+import: [uniforms.yaml]
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: vector-tiles-_vxMzew
+styles:
+    custom:
+        lighting: false
+        base: polygons
+        shaders:
+            blocks:
+                color: |
+                    int i = int(floor(v_color.r * 5.));
+                    if (i == 0) color.rgb = u_color0;
+                    if (i == 1) color.rgb = u_color1;
+                    if (i == 2) color.rgb = u_color2;
+                    if (i == 3) color.rgb = u_color3;
+                    if (i == 4) color.rgb = u_color4;
+layers:
+    earth:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 0
+                color: grey
+    water:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 1
+                color: lightblue
+    buildings:
+        data: { source: mapzen }
+        draw:
+            custom:
+                order: 1
+                # color: [0, 0, 0]
+                # color: [.25, 0, 0]
+                color: [.5, 0, 0]
+                # color: [.75, 0, 0]
+                # color: [1, 0, 0]

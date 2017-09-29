@@ -1,0 +1,10 @@
+styles:
+    custom:
+        shaders:
+            uniforms:
+                u_color0: [1, 0, 0]
+                u_color1: [1, 1, 0]
+                u_color2: [0, 1, 0]
+                u_color3: [0, 1, 1]
+                u_color4: [0, 0, 1]
+
