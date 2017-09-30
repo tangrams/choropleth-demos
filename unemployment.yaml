@@ -1,6 +1,9 @@
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
     - https://tangrams.github.io/blocks/functions/map.yaml
+camera:
+    zoom: 4.59583
+    position: [-98.962, 39.489]
 styles:
     albers:
         mix: [geometry-projections, functions-map]
