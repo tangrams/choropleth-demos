@@ -1,6 +1,5 @@
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
-    - https://tangrams.github.io/blocks/functions/map.yaml
 sources:
     osm:
         type: TopoJSON
@@ -60,17 +59,16 @@ lights:
         ambient: .5
 styles:
     toAlbers:
-        mix: [geometry-projections, functions-map]
+        mix: [geometry-projections]
         animated: true
         shaders:
             blocks:
                 position: |
                     // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
-                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
                     vec2 mercator = u_map_position.xy + position.xy;
                     float lat = y2lat_m(mercator.y);
                     float lon = x2lon_m(mercator.x);
-                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
+                    position.xy = latlon2albers(lat,lon,30.);
     albers:
         base: polygons
         mix: toAlbers
