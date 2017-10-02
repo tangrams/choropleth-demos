@@ -12,11 +12,10 @@ styles:
             blocks:
                 position: |
                     // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
-                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
                     vec2 mercator = u_map_position.xy + position.xy;
                     float lat = y2lat_m(mercator.y);
                     float lon = x2lon_m(mercator.x);
-                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
+                    position.xy = latlon2albers(lat,lon);
     albers-poly:
         base: polygons
         mix: albers
@@ -68,13 +67,6 @@ layers:
     counties:
         data: { source: states, layer: counties }
         draw:
-            text:
-                visible: false
-                collide: false
-                text_source: id
-                font:
-                    fill: red
-                    size: 10px
             albers-poly:
                 order: 3
                 color: |
@@ -87,8 +79,6 @@ layers:
                         var i = Math.floor(f * gradient.length);
                         i = Math.min(i, gradient.length - 1);
                         i = Math.max(i, 0);
-                        //if (isNaN(i)) console.log('nan:', feature.rate, feature.id)
-                        // console.log(i)
                         return gradient[i];
                     }
     states:
