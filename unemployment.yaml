@@ -2,11 +2,11 @@ import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
     - https://tangrams.github.io/blocks/functions/map.yaml
 camera:
-    zoom: 4.59583
-    position: [-98.962, 39.489]
+    # zoom: 4.59583
+    # position: [-98.962, 39.489]
 styles:
     albers:
-        mix: [geometry-projections, functions-map]
+        mix: [geometry-projections]
         animated: true
         shaders:
             blocks:
@@ -19,17 +19,9 @@ styles:
     albers-poly:
         base: polygons
         mix: albers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
     albers-line:
         base: lines
         mix: albers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
 sources:
     osm:
         type: TopoJSON
