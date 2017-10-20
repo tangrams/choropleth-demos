@@ -14,7 +14,7 @@ function parseQuery (qstr) {
 map = (function () {
     'use strict';
 
-    var map_start_location = [1.4461, -0.0189, 8]; // demo squares
+    var map_start_location = [39.681, -95.358, 5]; // US
 
     /*** URL parsing ***/
 

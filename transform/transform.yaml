@@ -9,7 +9,7 @@ sources:
         type: GeoJSON
         url: retail-spending-potential.geojson
         # url: sample.geojson
-        scripts: ['colorbrewer.min.js']
+        scripts: ['../lib/colorbrewer.min.js']
         transform: |
             function (data, extra_data) {
                 data.features.forEach(function(feature) { 

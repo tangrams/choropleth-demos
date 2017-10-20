@@ -1,8 +1,8 @@
 sources:
     sioux:
         type: GeoJSON
-        url: City_of_Sioux_Falls_Zoning.geojson # sioux falls
-        scripts: ['colorbrewer.min.js']
+        url: ../City_of_Sioux_Falls_Zoning.geojson # sioux falls
+        scripts: ['../lib/colorbrewer.min.js']
 
 global:
     minval: 100

@@ -7,8 +7,8 @@ sources:
         max_zoom: 16
     retail:
         type: GeoJSON
-        url: retail-spending-potential.geojson
-        scripts: ['colorbrewer.min.js', 'logbase.js']
+        url: ../retail-spending-potential.geojson
+        scripts: ['../lib/colorbrewer.min.js']
         transform: |
             function (data) {
                 var props = {};

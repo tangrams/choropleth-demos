@@ -1,6 +1,5 @@
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
-    - https://tangrams.github.io/blocks/functions/map.yaml
 sources:
     osm:
         type: TopoJSON
@@ -118,51 +117,32 @@ global:
             return gradient[i];
         }
 
-cameras:
-    perspective:
-        type: isometric
+camera:
+    zoom: 4.6
+    position: [-95.601, 39.122]
 styles:
-    toAlbers:
-        mix: [geometry-projections, functions-map]
+    albers:
+        mix: [geometry-projections]
         animated: true
         shaders:
             blocks:
                 position: |
                     // mercator position of the current vertex, u_map_position = center of screen, position.xy = vertex screen position in meters from the center of the screen
-                    float alpha = map(u_map_position.z,7.,24.,0.,1.);
                     vec2 mercator = u_map_position.xy + position.xy;
                     float lat = y2lat_m(mercator.y);
                     float lon = x2lon_m(mercator.x);
-                    position.xy = mix(latlon2albers(lat,lon),position.xy,alpha);
-    albers:
+                    position.xy = latlon2albers(lat,lon);
+    albers-poly:
         base: polygons
-        mix: toAlbers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
-                color: |
-                    // color.rgb *= vec3(min((worldPosition().z*.02+.7),1.));
+        mix: albers
     albers-line:
         base: lines
-        mix: toAlbers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
-                color: |
-                    color.rgb *= .8;
+        mix: albers
         
 layers:
     counties:
         data: { source: data }
         draw:
-            albers:
-                order: 2
-                # extrude: function() { return feature.rate; }
-                color: global.color
-            albers-line:
+            albers-poly:
                 order: 1
-                # extrude: function() { return feature.rate; }
-                width: 1px
                 color: global.color

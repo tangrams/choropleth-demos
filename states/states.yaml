@@ -1,12 +1,12 @@
 sources:
-    counties:
+    states:
         type: GeoJSON
-        url: gz_2010_us_050_00_20m.json # counties
-        scripts: ['colorbrewer.min.js']
+        url: gz_2010_us_040_00_20m.json # states
+        scripts: ['../lib/colorbrewer.min.js']
 
 global:
     minval: 100
-    maxval: 10000
+    maxval: 100000
     divisions: 6
     textvisible: false
     linesvisible: false
@@ -28,9 +28,9 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    counties-linear:
+    states-linear:
         enabled: true
-        data: { source: counties }
+        data: { source: states }
         draw:
             text:
                 visible: global.textvisible
@@ -62,9 +62,9 @@ layers:
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
-    counties-log:
+    states-log:
         enabled: false
-        data: { source: counties }
+        data: { source: states }
         draw:
             text:
                 visible: global.textvisible

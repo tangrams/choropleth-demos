@@ -31,7 +31,7 @@ sources:
     states:
         type: TopoJSON
         url:  us.json
-        scripts: ['unemployment.js', 'colorbrewer.min.js']
+        scripts: ['unemployment.js', '../lib/colorbrewer.min.js']
         transform: |
             function(data) {
                 function pad(n, width, z) {
