@@ -6,10 +6,8 @@ sources:
             api_key: mapzen-PvCT6iP
     test:
         type: GeoJSON
-        # url: https://rawgit.com/meetar/choropleth-demos/master/gz_2010_us_040_00_20m.json # states
-        # url: https://rawgit.com/meetar/choropleth-demos/master/gz_2010_us_050_00_20m.json # counties
-        url: https://rawgit.com/tangrams/choropleth-demos/master/blocks.json # counties
-        scripts: ['https://rawgit.com/mbostock/5577023/raw/14bc68f5c7aa174c53fc6efe8dab8292295da950/colorbrewer.min.js']
+        url: blocks.json # test blocks
+        scripts: ['lib/colorbrewer.min.js']
 camera:
     type: isometric
 layers:
@@ -35,10 +33,7 @@ layers:
                 text_source: |
                     function() {
                         var f = feature.value;
-                        // console.log(v)
-                        // return colorbrewer.YlGnBu['9'].length;
                         v = Math.pow(2, f);
-                        return v;
                         return Math.floor(f);
                     }
                 font:
@@ -67,31 +62,20 @@ layers:
 
 
                         s /= maxv;
-                        console.log('maxv:', maxv)
-
-                        console.log('max:', max)
                         f /= max;
-                        console.log(e, f, s)
 
                         var log = true;
                         // log = false;
 
                         if (log) {
                             var j = Math.floor(s * gradient.length)- 0;
-                            console.log('j:', j)
                             j = Math.min(j, gradient.length - 1);
-                            console.log('j:', j)
                             j = Math.max(j, 0);
-                            console.log('j:', j, '\n\n')
                             return gradient[j];
                         } else {
-
                             var i = Math.floor(f * gradient.length)- 0;
-                            console.log('i:', i)
                             i = Math.min(i, gradient.length - 1);
-                            console.log('i:', i)
                             i = Math.max(i, 0);
-                            console.log('i:', i, '\n\n');
                             return gradient[i];
                         }
 

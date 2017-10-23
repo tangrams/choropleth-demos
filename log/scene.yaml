@@ -1,0 +1,100 @@
+sources:
+    test:
+        type: GeoJSON
+        url: blocks.json # test blocks
+        scripts: ['../lib/colorbrewer.min.js']
+
+global:
+    minval: 0
+    maxval: 32
+    base: 2
+
+scene:
+    background:
+        color: '#add8e6'
+
+layers:
+    test-linear:
+        enabled: false
+        data: { source: test }
+        draw:
+            text:
+                collide: false
+                repeat_distance: 0px
+                text_source: value
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu['6'];
+                        var min = global.minval;
+                        var max = global.maxval;
+                        var value = feature.value;
+                        var e = value - min;
+                        var f = value - min;
+
+                        f /= max;
+
+                        var i = Math.floor(f * gradient.length)- 0;
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        return gradient[i];
+                    }
+
+            lines:
+                visible: true
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
+    test-log:
+        enabled: true
+        data: { source: test }
+        draw:
+            text:
+                repeat_distance: 0px
+                collide: false
+                text_source: value
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu['6'];
+
+                        var minv = global.minval;
+                        var maxv = global.maxval;
+                        minv = Math.max(minv, 1);
+
+                        minv = Math.log(minv);
+                        maxv = Math.log(maxv);
+                        minv = Math.max(minv, 0);
+
+                        var value = feature.value;
+                        value = Math.max(value, global.minval);
+                        value = Math.min(value, global.maxval);
+
+                        var scale = maxv-minv;
+
+                        // calculate adjustment factor
+                        // based on https://stackoverflow.com/questions/846221/logarithmic-slider
+                        var scaledValue = (Math.log(value)-minv) / scale;
+                        //scaledValue = Math.max(scaledValue, 0);
+
+                        // convert to an index in the gradient array
+                        var j = Math.floor(scaledValue * gradient.length);
+                        j = Math.min(j, gradient.length - 1);
+                        j = Math.max(j, 0);
+
+                        return gradient[j];
+                    }
+
+            lines:
+                visible: true
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black

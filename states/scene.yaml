@@ -1,0 +1,121 @@
+# display a choropleth of census block areas with a ColorBrewer palette,
+# with several interactive options
+
+sources:
+    states:
+        type: GeoJSON
+        url: gz_2010_us_040_00_20m.json # states
+        scripts: ['../lib/colorbrewer.min.js']
+
+global:
+    minval: 100
+    maxval: 100000
+    divisions: 6
+    textvisible: false
+    linesvisible: false
+
+scene:
+    background:
+        color: '#add8e6'
+
+layers:
+    earth:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 0
+                color: grey
+    water:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 1
+                color: lightblue
+    states-linear:
+        enabled: true
+        data: { source: states }
+        draw:
+            text:
+                visible: global.textvisible
+                collide: true
+                text_source: |
+                    function() {
+                        var f = feature.CENSUSAREA;
+                        return Math.floor(f);
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu[global.divisions];
+                        var min = global.minval;
+                        var max = global.maxval;
+                        var f = feature.CENSUSAREA - min;
+                        f /= max + min;
+                        var i = Math.floor(f * gradient.length);
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        return gradient[i];
+                    }
+            lines:
+                visible: global.linesvisible
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
+    states-log:
+        enabled: false
+        data: { source: states }
+        draw:
+            text:
+                visible: global.textvisible
+                repeat_distance: 0px
+                collide: true
+                text_source: |
+                    function() {
+                        var f = feature.CENSUSAREA;
+                        return Math.floor(f);
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        var gradient = colorbrewer.YlGnBu[global.divisions];
+
+                        var minv = global.minval;
+                        var maxv = global.maxval;
+                        minv = Math.max(minv, 1);
+
+                        minv = Math.log(minv);
+                        maxv = Math.log(maxv);
+                        minv = Math.max(minv, 0);
+
+                        var value = feature.CENSUSAREA;
+                        value = Math.max(value, global.minval);
+                        value = Math.min(value, global.maxval);
+
+                        var scale = maxv-minv;
+
+                        // calculate adjustment factor
+                        // based on https://stackoverflow.com/questions/846221/logarithmic-slider
+                        var scaledValue = (Math.log(value)-minv) / scale;
+                        //scaledValue = Math.max(scaledValue, 0);
+
+                        // convert to an index in the gradient array
+                        var j = Math.floor(scaledValue * gradient.length);
+                        j = Math.min(j, gradient.length - 1);
+                        j = Math.max(j, 0);
+
+                        return gradient[j];
+                    }
+
+            lines:
+                visible: global.linesvisible
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
