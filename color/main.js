@@ -48,8 +48,8 @@ map = (function () {
             scene.config.global.color = value;
             scene.updateConfig();
         });
-        gui.brightness = 0;
-        gui.add(gui, 'brightness', -10, 10).listen().onChange(function(value) {
+        gui.brightness = 0.;
+        gui.add(gui, 'brightness', -1., 1.).listen().onChange(function(value) {
             scene.config.global.brightness = value;
             scene.updateConfig();
         });
