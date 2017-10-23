@@ -1,0 +1,80 @@
+# display a choropleth of census block areas with a ColorBrewer palette,
+# with several interactive options
+
+sources:
+    states:
+        type: GeoJSON
+        url: gz_2010_us_040_00_20m.json # states
+        scripts: ['../lib/colorbrewer.min.js']
+
+global:
+    minval: 100
+    maxval: 100000
+    divisions: 6
+    brightness: 0
+    color: '#ffae23'
+scene:
+    background:
+        color: '#add8e6'
+
+layers:
+    earth:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 0
+                color: grey
+    water:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: 1
+                color: lightblue
+    states:
+        enabled:
+        data: { source: states }
+        draw:
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        
+                        function colorLuminance(hex, lum) {
+                          // Validate hex string
+                          hex = String(hex).replace(/[^0-9a-f]/gi, "");
+                          if (hex.length < 6) {
+                            hex = hex.replace(/(.)/g, '$1$1');
+                          }
+                          lum = lum || 0;
+                          // Convert to decimal and change luminosity
+                          var rgb = "#",
+                            c;
+                          for (var i = 0; i < 3; ++i) {
+                            c = parseInt(hex.substr(i * 2, 2), 16);
+                            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+                            rgb += ("00" + c).substr(c.length);
+                          }
+                          return rgb;
+                          }
+                        var start_color = global.color;
+                        var end_color = colorLuminance(start_color, global.brightness);
+                        var gradient = [start_color];
+                        var incr = global.brightness / global.divisions;
+                        for (var i = 0; i < global.divisions; i++) {
+                            console.log(incr)
+                            gradient.push(colorLuminance(start_color, incr * i));
+                        }
+                        console.log(gradient)
+                        var min = global.minval;
+                        var max = global.maxval;
+                        var f = feature.CENSUSAREA - min;
+                        f /= max + min;
+                        var i = Math.floor(f * gradient.length);
+                        i = Math.min(i, gradient.length - 1);
+                        i = Math.max(i, 0);
+                        return gradient[i];
+                    }
+            lines:
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
