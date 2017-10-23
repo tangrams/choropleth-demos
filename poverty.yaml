@@ -1,3 +1,5 @@
+# show poverty data as an extruded choropleth on an albers projection
+
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
     - https://tangrams.github.io/blocks/functions/map.yaml
@@ -9,15 +11,16 @@ sources:
             api_key: mapzen-tDHBHDp
     data:
         type: TopoJSON
-        url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
+        url:  us-states-poverty-10m.json
 scene:
     background:
         color: [1.000,1.000,1.000]
 global:
     color: function() { if (feature.rate > 18) { return [0.929,0.596,0.082]; } else if (feature.rate >= 12) {  return [0.949,0.757,0.141]; } else { return [0.847,0.851,0.851]; } }
-cameras:
-    perspective:
-        type: isometric
+camera:
+    zoom: 4.6
+    position: [-95.601, 39.122]
+    type: isometric
 lights:
     directional1:
         type: directional
@@ -59,7 +62,6 @@ styles:
 layers:
     water:
         data: { source: osm }
-        properties: { width: 3 }
         draw:
             albers-line:
                 order: 1

@@ -8,8 +8,6 @@ sources:
         type: GeoJSON
         url: blocks.json # test blocks
         scripts: ['lib/colorbrewer.min.js']
-camera:
-    type: isometric
 layers:
     earth:
         data: { source: mapzen }
