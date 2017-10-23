@@ -1,3 +1,6 @@
+# preprocess unemployment data to format and associate data file (unemployment.js)
+# with shape data (us.json), then display as a choropleth with several interactve options
+
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
     - https://tangrams.github.io/blocks/functions/map.yaml

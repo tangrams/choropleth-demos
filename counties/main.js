@@ -25,7 +25,7 @@ map = (function () {
     );
 
     var layer = Tangram.leafletLayer({
-        scene: 'transform.yaml',
+        scene: 'scene.yaml',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
@@ -42,61 +42,54 @@ map = (function () {
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
+        gui.linear = true;
+        gui.add(gui, 'linear').listen().onChange(function() {
+            gui.linear = true;
+            gui.log = false;
+            scene.config.layers['counties-linear'].enabled = true;
+            scene.config.layers['counties-log'].enabled = false;
+            scene.updateConfig();
+        });
+        gui.log = false;
+        gui.add(gui, 'log').listen().onChange(function() {
+            gui.log = true;
+            gui.linear = false;
+            scene.config.layers['counties-log'].enabled = true;
+            scene.config.layers['counties-linear'].enabled = false;
+            scene.updateConfig();
+        });
+
         gui.labels = false;
         gui.add(gui, 'labels').onChange(function(value) {
             scene.config.global.textvisible = value;
             scene.updateConfig();
         });
-        gui.minval = 0;
-        gui.add(gui, 'minval', 0, 200).listen().name("minimum value").onChange(function(value) {
-            scene.config.global.minval = value;
-            scene.updateConfig({ rebuild: true });
-            // scene.rebuild();
-        });
-        gui.maxval = 200;
-        gui.add(gui, 'maxval', 0, 200).listen().name("maximum value").onChange(function(value) {
-            scene.config.global.maxval = value;
-            scene.updateConfig({ rebuild: true });
-        });
-        gui.detectrange = function() {
-            scene.queryFeatures().then(results => {
-                var values = [];
-                  for (let key in results) { 
-                    if (typeof results[key].properties.retailspending_pct_usavg !== 'undefined') {
-                        values.push(results[key].properties.retailspending_pct_usavg);
-                    }
-                  }
-                var minmax = getminmax(values);
-                // var buckets = populationBuckets(values, 6);
 
-                  // console.log(buckets);
-                console.log('min, max:', minmax);
-                gui.minval = minmax.min;
-                scene.config.global.minval = minmax.min;
-                gui.maxval = minmax.max;
-                scene.config.global.maxval = minmax.max;
-                scene.updateConfig();
-            })
-        };
-        gui.add(gui, 'detectrange').name("detect range");
-        gui.colors = 6;
-        gui.add(gui, 'colors', 3, 9).listen().onChange(function(value) {
+        gui.lines = false;
+        gui.add(gui, 'lines').onChange(function(value) {
+            scene.config.global.linesvisible = value;
+            scene.updateConfig();
+        });
+
+        gui.minval = 100;
+        gui.add(gui, 'minval', 0, 2500).name("minimum value").onChange(function(value) {
+            scene.config.global.minval = value;
+            scene.updateConfig();
+        });
+
+        gui.maxval = 10000;
+        gui.add(gui, 'maxval', 0, 10000).name("maximum value").onChange(function(value) {
+            scene.config.global.maxval = value;
+            scene.updateConfig();
+        });
+
+        gui.divisions = 6;
+        gui.add(gui, 'divisions', 3, 9).listen().name("divisions").onChange(function(value) {
             gui.divisions = Math.round(value);
             scene.config.global.divisions = Math.round(value);
-            scene.updateConfig({ rebuild: true });
+            scene.updateConfig();
         });
     }
-
-function getminmax(values) {
- var min = Infinity;
- var max = 0;
-      for (let x in values) { 
-        min = Math.min(min, values[x]);
-        max = Math.max(max, values[x]);
-      }
-    return {min: min, max: max};
-    
-}
     /***** Render loop *****/
 
     window.addEventListener('load', function () {

@@ -1,3 +1,5 @@
+# basic color iterpolation - lerping
+
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
 sources:
@@ -24,29 +26,22 @@ global:
                 ];
             }
 
+            // set colors to interpolate between
             a = {r:1, g:0, b:0};
             b = {r:0, g:0, b:1};
 
-            // var gradient = colorbrewer.YlGnBu['9'];
-            // var gradient = [[1, 1, 1], [.5, .5, .5], [0, 0, 0]]
             var gradient = [];
             var steps = 10;
             for (x = 0; x < 1; x += (1/steps)) {
-                // console.log(x);
-                // console.log(lerp(a, b, x))
                 gradient.push(lerp(a, b, x));
                 }
             var value = feature.rate - global.min;
-            // var value = feature.rate;
             value /= global.max - global.min;
             value = 1. - value;
             var i = Math.floor(value * gradient.length);
             i = Math.min(i, gradient.length - 1);
             i = Math.max(i, 0);
             return gradient[i];
-
-
-            // if (feature.rate > 18) { return [0.929,0.596,0.082]; } else if (feature.rate >=     12) {  return [0.949,0.757,0.141]; } else { return [0.847,0.851,0.851]; }
         }
 camera:
     zoom: 4.6
@@ -86,18 +81,15 @@ styles:
                 position: |
                     position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
                 color: |
-                    color.rgb *= .8;
-        
+                    color.rgb *= .8;        
 layers:
     counties:
         data: { source: data }
         draw:
             albers:
                 order: 2
-                # extrude: function() { return feature.rate; }
                 color: global.color
             albers-line:
                 order: 1
-                # extrude: function() { return feature.rate; }
                 width: 1px
                 color: global.color

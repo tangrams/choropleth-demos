@@ -1,15 +1,17 @@
-# display a choropleth of census block areas with a ColorBrewer palette,
-# with several interactive options
-
 sources:
     states:
         type: GeoJSON
-        url: gz_2010_us_040_00_20m.json # states
-        scripts: ['../lib/colorbrewer.min.js']
+        url: gz_2010_us_050_00_20m.json # states
+        scripts:
+            - https://d3js.org/d3.v3.min.js
+            - https://d3js.org/d3-color.v1.min.js
+            - https://d3js.org/d3-scale.v1.min.js
+            - https://d3js.org/d3-interpolate.v1.min.js
+            - lib/cubehelix.js
 
 global:
     minval: 100
-    maxval: 100000
+    maxval: 10000
     divisions: 6
     textvisible: false
     linesvisible: false
@@ -31,8 +33,44 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    states-linear:
+    d3-states-linear:
         enabled: true
+        data: { source: states }
+        draw:
+            text:
+                visible: global.textvisible
+                collide: true
+                text_source: |
+                    function() {
+                        var f = feature.CENSUSAREA;
+                        return Math.floor(f);
+                    }
+                font:
+                    fill: red
+                    size: 10px
+            polygons:
+                order: 3
+                color: |
+                    function() {
+                        //var gradient = colorbrewer.YlGnBu[global.divisions];
+                        //var d3scale = d3.scaleLinear().domain([global.minval, global.maxval]).range([0, global.divisions - 1]).clamp(true);
+                        //var i = Math.floor(d3scale(feature.CENSUSAREA));
+                        //return gradient[i];
+                        //var inter = d3.interpolateRgb("steelblue", "brown");
+                        //console.log(inter)
+                        //var cubehelix = d3.interpolateCubehelix("hsl(300,50%,0%)", "hsl(-240,50%,100%)");
+                        //var i = d3.interpolateCubehelix("hsl(300,50%,0%)", "hsl(-240,50%,100%)");
+                        var mcolor = d3.scale.cubehelix().domain([0, width - 1]);
+                        //console.log(i(0.0)); // 10
+                        console.log(mcolor);
+                    }
+            lines:
+                visible: global.linesvisible
+                order: 4
+                width: [[3,.3px],[5,1px]]
+                color: black
+    states-linear:
+        enabled: false
         data: { source: states }
         draw:
             text:

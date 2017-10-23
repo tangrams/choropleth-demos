@@ -1,15 +1,16 @@
-# display a choropleth of census block areas with a ColorBrewer palette,
-# with several interactive options
+# demo showing a way to use a ColorBrewer palette with various
+# options – linear or log interpolation, min/max, and number
+# of divisions
 
 sources:
-    states:
+    counties:
         type: GeoJSON
-        url: gz_2010_us_040_00_20m.json # states
+        url: ../gz_2010_us_050_00_20m.json # counties
         scripts: ['../lib/colorbrewer.min.js']
 
 global:
     minval: 100
-    maxval: 100000
+    maxval: 10000
     divisions: 6
     textvisible: false
     linesvisible: false
@@ -31,9 +32,9 @@ layers:
             polygons:
                 order: 1
                 color: lightblue
-    states-linear:
+    counties-linear:
         enabled: true
-        data: { source: states }
+        data: { source: counties }
         draw:
             text:
                 visible: global.textvisible
@@ -65,9 +66,9 @@ layers:
                 order: 4
                 width: [[3,.3px],[5,1px]]
                 color: black
-    states-log:
+    counties-log:
         enabled: false
-        data: { source: states }
+        data: { source: counties }
         draw:
             text:
                 visible: global.textvisible

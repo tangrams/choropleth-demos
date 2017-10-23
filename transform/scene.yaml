@@ -1,3 +1,7 @@
+# transform block changes original data string data to numbers, eg:
+# "10% below" to "-10"
+# then displays with a ColorBrewer palette with various interactive options
+
 sources:
     mapzen:
         type: TopoJSON
@@ -7,7 +11,7 @@ sources:
         max_zoom: 16
     retail:
         type: GeoJSON
-        url: retail-spending-potential.geojson
+        url: ../retail-spending-potential.geojson
         # url: sample.geojson
         scripts: ['../lib/colorbrewer.min.js']
         transform: |
