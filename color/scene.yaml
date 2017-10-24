@@ -38,8 +38,33 @@ layers:
                 order: 3
                 color: |
                     function() {
-                        
-                        function colorLuminance(hex, lum) {
+
+                        function componentToHex(c) {
+                            var hex = c.toString(16);
+                            return hex.length == 1 ? "0" + hex : hex;
+                        }
+
+                        function rgbToHex(rgb) {
+                            console.log('?', rgb);
+                            return "#" + componentToHex(parseInt(rgb[0])) + componentToHex(parseInt(rgb[1])) + componentToHex(parseInt(rgb[2]));
+                        }
+
+                        function hexToRgb(hex) {
+                            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result ? [
+                                parseInt(result[1], 16),
+                                parseInt(result[2], 16),
+                                parseInt(result[3], 16)
+                            ] : null;
+                        }
+
+                        function rgbLuminance(rgb, lum) {
+                            var val = [rgb[0] + rgb[0] * lum, rgb[1] + rgb[1] * lum, rgb[2] + rgb[2] * lum];
+                            val = [Math.min(val[0], 255), Math.min(val[1], 255), Math.min(val[2], 255)]
+                            return val;
+                        }
+
+                        function colorSaturation(hex, sat) {
                             // Validate hex string
                             hex = String(hex).replace(/[^0-9a-f]/gi, "");
                             if (hex.length < 6) {
@@ -51,17 +76,17 @@ layers:
                             for (var i = 0; i < 3; ++i) {
                                 c = parseInt(hex.substr(i * 2, 2), 16);
                                 c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+                                console.log(rgb);
                                 rgb += ("00" + c).substr(c.length);
                             }
                             return rgb;
                         }
                         var start_color = global.color;
-                        var end_color = colorLuminance(start_color, global.brightness);
                         var gradient = [];
                         var incr = global.brightness / global.divisions;
+                        console.log(incr);
                         for (var i = 0; i < global.divisions; i++) {
-                            console.log(incr)
-                            gradient.push(colorLuminance(start_color, incr * i));
+                            gradient.push(rgbToHex(rgbLuminance(hexToRgb(start_color), incr * i)));
                         }
                         console.log(gradient)
                         var min = global.minval;
@@ -72,6 +97,7 @@ layers:
                         i = Math.min(i, gradient.length - 1);
                         i = Math.max(i, 0);
                         return gradient[i];
+                        return [0, 1, 1]
                     }
             lines:
                 order: 4
