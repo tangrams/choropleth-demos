@@ -42,7 +42,7 @@ map = (function () {
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
-        gui.color = "#ffae23"; // CSS string
+        gui.color = "#bb3737"; // CSS string
         gui.addColor(gui, 'color').onChange(function(value) {
             scene.config.global.color = value;
             scene.updateConfig();

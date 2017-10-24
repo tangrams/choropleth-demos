@@ -14,7 +14,7 @@ global:
     saturation: 0
     brightness: 0
     divisions: 6
-    color: '#ff0000'
+    color: '#bb3737'
 scene:
     background:
         color: '#add8e6'
