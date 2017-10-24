@@ -51,22 +51,37 @@ map = (function () {
         gui.add(gui, 'hue', -.5, .5).name("hue shift").step(.001).onChange(function(value) {
             scene.config.global.hueshift = value;
             scene.updateConfig();
-        });
+        }).listen();
         gui.saturation = 0.;
         gui.add(gui, 'saturation', -1, 1).step(.001).onChange(function(value) {
             scene.config.global.saturation = value;
             scene.updateConfig();
-        });
+        }).listen();
         gui.brightness = 0.;
         gui.add(gui, 'brightness', -1., 1.).step(.001).onChange(function(value) {
             scene.config.global.brightness = value;
             scene.updateConfig();
-        });
+        }).listen();
         gui.divisions = 6;
         gui.add(gui, 'divisions', 2, 10).step(1).onChange(function(value) {
             scene.config.global.divisions = parseInt(value);
             scene.updateConfig();
-        });
+        }).listen();
+        gui.reset = function(){
+            gui.hue = gui.saturation = gui.brightness = scene.config.global.brightness = scene.config.global.saturation = scene.config.global.hueshift = 0;
+            scene.updateConfig();
+        };
+        gui.add(gui, 'reset');
+        gui.random = function(){
+            gui.hue = Math.random() * 2 - 1;
+            gui.saturation = Math.random();
+            gui.brightness = Math.random();
+            scene.config.global.hueshift = gui.hue;
+            scene.config.global.brightness = gui.brightness;
+            scene.config.global.saturation = gui.saturation;
+            scene.updateConfig();
+        };
+        gui.add(gui, 'random');
 
     }
     /***** Render loop *****/
