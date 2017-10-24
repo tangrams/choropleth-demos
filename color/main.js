@@ -53,12 +53,14 @@ map = (function () {
             scene.config.global.brightness = value;
             scene.updateConfig();
         });
-        gui.add(gui, 'saturation').listen().onChange(function() {
+        gui.saturation = 0.;
+        gui.add(gui, 'saturation', -1, 1).listen().onChange(function(value) {
             scene.config.global.saturation = value;
             scene.updateConfig();
         });
-        gui.add(gui, 'divisions').listen().onChange(function(value) {
-            scene.config.global.divisions = value;
+        gui.divisions = 6;
+        gui.add(gui, 'divisions', 2, 10).listen().onChange(function(value) {
+            scene.config.global.divisions = parseInt(value);
             scene.updateConfig();
         });
 
