@@ -48,22 +48,22 @@ map = (function () {
             scene.updateConfig();
         });
         gui.hue = 0.;
-        gui.add(gui, 'hue', -.5, .5).name("hue shift").listen().onChange(function(value) {
+        gui.add(gui, 'hue', -.5, .5).name("hue shift").step(.001).onChange(function(value) {
             scene.config.global.hueshift = value;
             scene.updateConfig();
         });
         gui.saturation = 0.;
-        gui.add(gui, 'saturation', -1, 1).listen().onChange(function(value) {
+        gui.add(gui, 'saturation', -1, 1).step(.001).onChange(function(value) {
             scene.config.global.saturation = value;
             scene.updateConfig();
         });
         gui.brightness = 0.;
-        gui.add(gui, 'brightness', -1., 1.).listen().onChange(function(value) {
+        gui.add(gui, 'brightness', -1., 1.).step(.001).onChange(function(value) {
             scene.config.global.brightness = value;
             scene.updateConfig();
         });
         gui.divisions = 6;
-        gui.add(gui, 'divisions', 2, 10).listen().onChange(function(value) {
+        gui.add(gui, 'divisions', 2, 10).step(1).onChange(function(value) {
             scene.config.global.divisions = parseInt(value);
             scene.updateConfig();
         });
