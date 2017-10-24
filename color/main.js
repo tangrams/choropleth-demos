@@ -44,18 +44,22 @@ map = (function () {
         window.gui = gui;
         gui.color = "#ffae23"; // CSS string
         gui.addColor(gui, 'color').onChange(function(value) {
-            // console.log(hexToRgb(value));
             scene.config.global.color = value;
             scene.updateConfig();
         });
-        gui.brightness = 0.;
-        gui.add(gui, 'brightness', -1., 1.).listen().onChange(function(value) {
-            scene.config.global.brightness = value;
+        gui.hue = 0.;
+        gui.add(gui, 'hue', -.5, .5).name("hue shift").listen().onChange(function(value) {
+            scene.config.global.hueshift = value;
             scene.updateConfig();
         });
         gui.saturation = 0.;
         gui.add(gui, 'saturation', -1, 1).listen().onChange(function(value) {
             scene.config.global.saturation = value;
+            scene.updateConfig();
+        });
+        gui.brightness = 0.;
+        gui.add(gui, 'brightness', -1., 1.).listen().onChange(function(value) {
+            scene.config.global.brightness = value;
             scene.updateConfig();
         });
         gui.divisions = 6;

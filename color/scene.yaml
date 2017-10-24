@@ -10,10 +10,11 @@ sources:
 global:
     minval: 100
     maxval: 100000
-    divisions: 6
-    brightness: 0
+    hueshift: 0
     saturation: 0
-    color: '#ffae23'
+    brightness: 0
+    divisions: 6
+    color: '#ff0000'
 scene:
     background:
         color: '#add8e6'
@@ -56,24 +57,6 @@ layers:
                                 parseInt(result[2], 16),
                                 parseInt(result[3], 16)
                             ] : null;
-                        }
-
-                        function rgbLuminance(rgb, lum) {
-                            var val = [rgb[0] + rgb[0] * lum, rgb[1] + rgb[1] * lum, rgb[2] + rgb[2] * lum];
-                            val = [Math.min(val[0], 255), Math.min(val[1], 255), Math.min(val[2], 255)]
-                            return val;
-                        }
-
-                        function rgbSaturation(rgb, sat) {
-                            sat = sat || 0;
-                            // Convert to hsl and change luminosity
-                            var hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
-                            hsl = [hsl[0], hsl[1] + hsl[1]*sat, hsl[2]];
-                            hsl[1] = Math.min(hsl[1], 1);
-                            hsl[2] = Math.min(hsl[2], 1);
-                            var val = hslToRgb(hsl);
-                            val = [Math.min(val[0], 255), Math.min(val[1], 255), Math.min(val[2], 255)];
-                            return val;
                         }
 
                         function rgbToHsl(r, g, b){
@@ -121,24 +104,35 @@ layers:
                             return [r * 255, g * 255, b * 255];
                         }
 
-                        var start_color = global.color;
+                        // perform adjustments
+                        function rgbAdjust(rgb, hue, sat, lum) {
+                            // Convert to hsl and make adjustments
+                            var hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
+                            hsl = [hsl[0] + hue, hsl[1] + hsl[1] * sat, hsl[2] + hsl[2] * lum];
+
+                            // normalize
+                            hsl[0] = (1 + hsl[0]) % 1; // keep between [0..360]
+                            hsl[1] = Math.min(hsl[1], 1);
+                            hsl[2] = Math.min(hsl[2], 1);
+
+                            var val = hslToRgb(hsl);
+                            return [Math.min(val[0], 255), Math.min(val[1], 255), Math.min(val[2], 255)];
+                        }
+
                         var gradient = [];
+                        // initialize gradient
                         for (var i = 0; i < global.divisions; i++) {
-                            gradient[i] = start_color;
+                            gradient[i] = global.color;
                         }
-                        var incr = global.brightness / (global.divisions - 1);
-                        if (incr != 0) {
-                            for (var i = 1; i < global.divisions; i++) {
-                                gradient[i] = rgbToHex(rgbLuminance(hexToRgb(gradient[0]), incr * i));
-                            }
+                        for (var i = 1; i < global.divisions; i++) {
+                            gradient[i] = rgbToHex(rgbAdjust(
+                                hexToRgb(global.color),
+                                global.hueshift / (global.divisions - 1) * i,
+                                global.saturation / (global.divisions - 1) * i,
+                                global.brightness / (global.divisions - 1) * i));
                         }
-                        incr = global.saturation / (global.divisions - 1);
-                        if (incr != 0) {
-                            for (var i = 1; i < global.divisions; i++) {
-                                gradient[i] = rgbToHex(rgbSaturation(hexToRgb(gradient[i]), incr * i));
-                            }
-                        }
-                        console.log(gradient)
+
+                        // fit input values to gradient
                         var min = global.minval;
                         var max = global.maxval;
                         var f = feature.CENSUSAREA - min;
