@@ -63,6 +63,9 @@ styles:
     albers:
         base: polygons
         mix: toAlbers
+    albers-lines:
+        base: lines
+        mix: toAlbers
 
 layers:
     counties:
@@ -71,3 +74,8 @@ layers:
             albers:
                 order: 2
                 color: global.color
+            # fill gaps between polys created by the projection
+            albers-lines:
+                order: 1
+                color: global.color
+                width: 1px
