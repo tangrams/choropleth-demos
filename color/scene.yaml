@@ -8,7 +8,7 @@ sources:
         scripts: ['../lib/colorbrewer.min.js', 'color-functions.js']
 
 global:
-    minval: 100
+    minval: 10000
     maxval: 100000
     hueshift: 0
     saturation: 0
