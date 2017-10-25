@@ -43,10 +43,10 @@ map = (function () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
         gui.color = "#bb3737"; // CSS string
-        gui.addColor(gui, 'color').onChange(function(value) {
+        gui.addColor(gui, 'color').name("start color").onChange(function(value) {
             scene.config.global.color = value;
             scene.updateConfig();
-        });
+        }).listen();
         gui.hue = 0.;
         gui.add(gui, 'hue', -.5, .5).name("hue shift").step(.001).onChange(function(value) {
             scene.config.global.hueshift = value;
