@@ -39,6 +39,17 @@ map = (function () {
 
     // Create dat GUI
     var gui;
+    function randomizeGUI() {
+        gui.color = randomHex();
+        gui.hue = Math.random() * 2 - 1;
+        gui.saturation = Math.random();
+        gui.brightness = Math.random();
+        scene.config.global.color = gui.color;
+        scene.config.global.hueshift = gui.hue;
+        scene.config.global.brightness = gui.brightness;
+        scene.config.global.saturation = gui.saturation;
+        scene.updateConfig();
+    }
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
@@ -68,16 +79,7 @@ map = (function () {
             scene.updateConfig();
         }).listen();
         gui.random = function(){
-            gui.color = randomHex();
-            console.log('gui.color:', gui.color)
-            gui.hue = Math.random() * 2 - 1;
-            gui.saturation = Math.random();
-            gui.brightness = Math.random();
-            scene.config.global.color = gui.color;
-            scene.config.global.hueshift = gui.hue;
-            scene.config.global.brightness = gui.brightness;
-            scene.config.global.saturation = gui.saturation;
-            scene.updateConfig();
+            randomizeGUI();
         };
         gui.add(gui, 'random');
         gui.reset = function(){
@@ -94,6 +96,7 @@ map = (function () {
         layer.on('init', function() {
             gui = new dat.GUI({ autoPlace: true, hideable: true, width: 300 });
             addGUI();
+            randomizeGUI();
             // console.log('main test:', testcolor)
         });
         layer.addTo(map);
