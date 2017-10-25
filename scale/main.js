@@ -42,22 +42,6 @@ map = (function () {
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 1000; // make sure GUI is on top of map
         window.gui = gui;
-        gui.linear = true;
-        gui.add(gui, 'linear').listen().onChange(function() {
-            gui.linear = true;
-            gui.log = false;
-            scene.config.layers['states-linear'].enabled = true;
-            scene.config.layers['states-log'].enabled = false;
-            scene.updateConfig();
-        });
-        gui.log = false;
-        gui.add(gui, 'log').listen().onChange(function() {
-            gui.log = true;
-            gui.linear = false;
-            scene.config.layers['states-log'].enabled = true;
-            scene.config.layers['states-linear'].enabled = false;
-            scene.updateConfig();
-        });
         gui.labels = false;
         gui.add(gui, 'labels').onChange(function(value) {
             scene.config.global.textvisible = value;

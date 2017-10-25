@@ -27,8 +27,8 @@ sources:
 
 global:
     sdk_mapzen_api_key: mapzen-PvCT6iP
-    minval: 100
-    maxval: 10000
+    minval: 0
+    maxval: 151
     divisions: 6
     textvisible: false
     linesvisible: false
