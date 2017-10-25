@@ -24,8 +24,8 @@ HSL Interpolation<br>
 https://tangrams.github.io/?url=color-hsl.yaml
 
 Interactive range adjustments and log scale<br>
-https://tangrams.github.io/choropleth-demos/log/
-https://tangrams.github.io/choropleth-demos/states/
+https://tangrams.github.io/choropleth-demos/log/<br>
+https://tangrams.github.io/choropleth-demos/states/<br>
 https://tangrams.github.io/choropleth-demos/counties/
 
 Automatic range detection<br>
