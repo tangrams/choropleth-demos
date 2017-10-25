@@ -67,21 +67,24 @@ map = (function () {
             scene.config.global.divisions = parseInt(value);
             scene.updateConfig();
         }).listen();
-        gui.reset = function(){
-            gui.hue = gui.saturation = gui.brightness = scene.config.global.brightness = scene.config.global.saturation = scene.config.global.hueshift = 0;
-            scene.updateConfig();
-        };
-        gui.add(gui, 'reset');
         gui.random = function(){
+            gui.color = randomHex();
+            console.log('gui.color:', gui.color)
             gui.hue = Math.random() * 2 - 1;
             gui.saturation = Math.random();
             gui.brightness = Math.random();
+            scene.config.global.color = gui.color;
             scene.config.global.hueshift = gui.hue;
             scene.config.global.brightness = gui.brightness;
             scene.config.global.saturation = gui.saturation;
             scene.updateConfig();
         };
         gui.add(gui, 'random');
+        gui.reset = function(){
+            gui.hue = gui.saturation = gui.brightness = scene.config.global.brightness = scene.config.global.saturation = scene.config.global.hueshift = 0;
+            scene.updateConfig();
+        };
+        gui.add(gui, 'reset');
 
     }
     /***** Render loop *****/
