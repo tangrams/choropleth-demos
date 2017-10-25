@@ -1,7 +1,8 @@
-# basic color iterpolation - lerping
+# basic RGB linear iterpolation (lerp)
 
 import:
     - https://tangrams.github.io/blocks/geometry/projections.yaml
+
 sources:
     osm:
         type: TopoJSON
@@ -9,12 +10,13 @@ sources:
     data:
         type: TopoJSON
         url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
-        scripts: ['https://rawgit.com/mbostock/5577023/raw/14bc68f5c7aa174c53fc6efe8dab8292295da950/colorbrewer.min.js']
-scene:
-    background:
-        color: [1.000,1.000,1.000]
+
+camera:
+    zoom: 4.6
+    position: [-95.601, 39.122]
+
 global:
-    min: 10
+    min: 0
     max: 50
     color: |
         function() {
@@ -32,9 +34,11 @@ global:
 
             var gradient = [];
             var steps = 10;
-            for (x = 0; x < 1; x += (1/steps)) {
-                gradient.push(lerp(a, b, x));
-                }
+            for (x = 0; x < steps; x++) {
+                y = (x)/(steps-1);
+                gradient.push(lerp(a, b, y));
+            }
+
             var value = feature.rate - global.min;
             value /= global.max - global.min;
             value = 1. - value;
@@ -43,15 +47,7 @@ global:
             i = Math.max(i, 0);
             return gradient[i];
         }
-camera:
-    zoom: 4.6
-    position: [-95.601, 39.122]
-lights:
-    directional1:
-        type: directional
-        direction: [.1, .5, -1]
-        diffuse: .7
-        ambient: .5
+
 styles:
     toAlbers:
         mix: [geometry-projections]
@@ -67,29 +63,11 @@ styles:
     albers:
         base: polygons
         mix: toAlbers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
-                color: |
-                    color.rgb *= vec3(min((worldPosition().z*.02+.7),1.));
-    albers-line:
-        base: lines
-        mix: toAlbers
-        shaders: 
-            blocks: 
-                position: |
-                    position.z = pow(position.z*7.,(1.-u_map_position.z*0.05)*3.);
-                color: |
-                    color.rgb *= .8;        
+
 layers:
     counties:
         data: { source: data }
         draw:
             albers:
                 order: 2
-                color: global.color
-            albers-line:
-                order: 1
-                width: 1px
                 color: global.color
