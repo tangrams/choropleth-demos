@@ -1,7 +1,7 @@
 sources:
     test:
         type: GeoJSON
-        url: blocks.json # test blocks
+        url: ../blocks.json # test blocks
         scripts: ['../lib/colorbrewer.min.js']
 
 global:
