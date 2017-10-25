@@ -15,21 +15,15 @@ sources:
             function (data) {
                 var props = {};
                 data.features.forEach(function(feature) {
-                    for (var prop in feature.properties) {
-                        if (global.props.indexOf(prop) === -1) global.props.push(prop);
-                    }
                     var d = feature.properties[global.whichproperty];
                     var match = /([0-9]*)\% (.*)/.exec(d);
                     value = (match[2] === "below" ? '-' : '')+match[1];
                     feature.properties[global.whichproperty] = (parseInt(value) + 100) / 2;
                 });
-                console.log('global.props:', global.props)
-                global.props = 'test'
                 return data;
             }
 
 global:
-    props: []
     sdk_mapzen_api_key: mapzen-PvCT6iP
     minval: 100
     maxval: 10000

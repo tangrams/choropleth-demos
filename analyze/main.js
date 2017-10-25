@@ -58,34 +58,28 @@ map = (function () {
             scene.config.global.maxval = value;
             scene.updateConfig({ rebuild: true });
         });
-        gui.detectrange = function() {
-
-            scene.queryFeatures().then(results => {
-                var values = [];
-                  for (let key in results) { 
-                    if (typeof results[key].properties.retailspending_pct_usavg !== 'undefined') {
-                        values.push(results[key].properties.retailspending_pct_usavg);
-                    }
-                  }
-                var minmax = getminmax(values);
-                var buckets = populationBuckets(values, 6);
-
-                  console.log(buckets);
-                console.log('min, max:', minmax);
-                gui.minval = minmax.min;
-                scene.config.global.minval = minmax.min;
-                gui.maxval = minmax.max;
-                scene.config.global.maxval = minmax.max;
-                scene.updateConfig();
-            })
-        };
-        gui.add(gui, 'detectrange').name("detect range");
+        var propertyElement;
         gui.getprops = function() {
-            gui.add(gui, 'property', scene.config.global.props).onChange(function(value) {
-                scene.config.global.whichproperty = value;
-                scene.updateConfig({ rebuild: true });
-            });
-            // scene.updateConfig();
+            if (typeof propertyElement != 'undefined') gui.remove(propertyElement);
+
+            scene.queryFeatures({ filter: { $source: 'retail' } }).then(results => {
+                // collect all unique properties in the retail features
+                var properties = [];
+                for (let key in results) {
+                    for (let prop in results[key].properties) {
+                        if (properties.indexOf(prop) < 0) {
+                            properties.push(prop);
+                        }
+                    }
+                }
+                console.log(properties);
+                // populate the properties dropdown
+                propertyElement = gui.add(gui, 'property', properties).onChange(function(value) {
+                    scene.config.global.whichproperty = value;
+                    scene.updateConfig({ rebuild: true });
+                    detectRange(gui.property);
+                });
+            })
         };
         gui.add(gui, 'getprops').name("get properties");
         gui.colors = 6;
@@ -105,6 +99,28 @@ function getminmax(values) {
       }
     return {min: min, max: max};
     
+}
+
+function detectRange(property) {
+    scene.queryFeatures().then(results => {
+    var values = [];
+        for (let key in results) { 
+            if (typeof results[key].properties[property] !== 'undefined') {
+                values.push(results[key].properties[property]);
+          }
+        }
+        var minmax = getminmax(values);
+        var buckets = populationBuckets(values, 6);
+
+        console.log(buckets);
+        console.log('min, max:', minmax);
+        gui.minval = minmax.min;
+        scene.config.global.minval = minmax.min;
+        gui.maxval = minmax.max;
+        scene.config.global.maxval = minmax.max;
+        scene.updateConfig();
+    })
+
 }
 
 function populationBuckets(data, bucketCount, min, max) {
@@ -149,6 +165,3 @@ function populationBuckets(data, bucketCount, min, max) {
     return map;
 
 }());
-function test() {
-    console.log('test');
-}
