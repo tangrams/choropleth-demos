@@ -36,11 +36,10 @@ https://tangrams.github.io/choropleth-demos/scale/
 
 ### Local demos
 
-These examples use large files stored on [git LFS](https://git-lfs.github.com/) – to see them in action:
+These examples use large files stored on [git LFS](https://git-lfs.github.com/). To see them in action:
 
-- clone this repo and navigate to its directory
-- install git LFS with `homebrew install git-lefs`
-- run `git lfs pull`
+- install git LFS with `homebrew install git-lfs`
+- clone this repo with `git lfs clone git@github.com:tangrams/choropleth-demos.git`
 - serve the repo locally
 
 Data transformation and property modification<br>
