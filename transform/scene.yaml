@@ -5,7 +5,7 @@
 sources:
     nextzen:
         type: TopoJSON
-        url: url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.topojson
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.topojson
         url_params:
             api_key: tsINU1vsQnKLU1jjCimtVw
         max_zoom: 16
