@@ -6,9 +6,9 @@ import:
 sources:
     osm:
         type: TopoJSON
-        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.topojson
         url_params:
-            api_key: mapzen-tDHBHDp
+            api_key: tsINU1vsQnKLU1jjCimtVw
     data:
         type: TopoJSON
         url:  us-states-poverty-10m.json

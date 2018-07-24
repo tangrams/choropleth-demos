@@ -12,16 +12,16 @@ Choropleth created with a real-time data join, using [ColorBrewer](http://colorb
 https://tangrams.github.io/choropleth-demos/unemployment/
 
 3D extruded choropleth<br>
-https://tangrams.github.io/?url=poverty.yaml
+https://tangrams.github.io/choropleth-demos/?url=poverty.yaml
 
 Color interpolation functions<br>
 https://tangrams.github.io/choropleth-demos/color/
 
 RGB linear interpolation<br>
-https://tangrams.github.io/?url=color-lerp.yaml
+https://tangrams.github.io/choropleth-demos/?url=color-lerp.yaml
 
 HSL Interpolation<br>
-https://tangrams.github.io/?url=color-hsl.yaml
+https://tangrams.github.io/choropleth-demos/?url=color-hsl.yaml
 
 Interactive range adjustments and log scale<br>
 https://tangrams.github.io/choropleth-demos/log/<br>
@@ -36,11 +36,15 @@ https://tangrams.github.io/choropleth-demos/scale/
 
 ### Local demos
 
-These examples use large files stored on [git LFS](https://git-lfs.github.com/) - clone this repo and serve it locally to see them in action.
+These examples use large files stored on [git LFS](https://git-lfs.github.com/) – to see them in action:
+
+- clone this repo and navigate to its directory
+- install git LFS with `homebrew install git-lefs`
+- run `git lfs pull`
+- serve the repo locally
 
 Data transformation and property modification<br>
-http://localhost:8080/choropleth-demos/transform/
+http://localhost:8080/transform/
 
 Automatic range and property detection<br>
-http://https://localhost:8080/choropleth-demos/analyze/
-
+http://https://localhost:8080/analyze/

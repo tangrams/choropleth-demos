@@ -3,11 +3,11 @@
 # then displays with a ColorBrewer palette with various interactive options
 
 sources:
-    mapzen:
+    nextzen:
         type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url: url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.topojson
         url_params:
-            api_key: mapzen-tDHBHDp
+            api_key: tsINU1vsQnKLU1jjCimtVw
         max_zoom: 16
     retail:
         type: GeoJSON
@@ -26,7 +26,7 @@ sources:
             }
 
 global:
-    sdk_mapzen_api_key: mapzen-PvCT6iP
+    sdk_mapzen_api_key: tsINU1vsQnKLU1jjCimtVw
     minval: 0
     maxval: 151
     divisions: 6
@@ -69,14 +69,14 @@ layers:
                     }
     water:
         data:
-            source: mapzen
+            source: nextzen
         draw:
             polygons:
                 order: 0
                 color: '#222'
     boundaries:
         data:
-            source: mapzen
+            source: nextzen
         draw:
             lines:
                 order: 1

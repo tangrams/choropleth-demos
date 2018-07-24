@@ -6,7 +6,7 @@ import:
 sources:
     osm:
         type: TopoJSON
-        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?
+        url:  https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.topojson?
     data:
         type: TopoJSON
         url:  https://tangrams.github.io/tangram-sandbox/data/us-states-10m.json
